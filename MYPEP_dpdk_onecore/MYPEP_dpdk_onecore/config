@@ -1,0 +1,1 @@
+./configure --gateway=yes --tap(tun 路由)=yes --gateway_router=yes --gateway_ri_console=yes --gateway_larger=yes --memory=150000000  (--low_cpu=yes --low_idle=yes lowcpu选项) 

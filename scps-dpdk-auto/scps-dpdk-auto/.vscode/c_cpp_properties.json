@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "defines": [
+                "DEBUG", // 定义 DEBUG 宏
+                "VERSION=2", // 定义 VERSION 宏
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "TAP_INTERFACE"
+            ],
+            "cStandard": "c11", // 指定 C 语言标准
+            "cppStandard": "c++17", // 指定 C++ 语言标准（如果需要）
+            "intelliSenseMode": "gcc-x64" // 指定 IntelliSense 模式
+        }
+    ],
+    "version": 4
+}

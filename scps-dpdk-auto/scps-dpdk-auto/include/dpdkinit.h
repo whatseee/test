@@ -1,0 +1,116 @@
+#ifndef _DPDK_INIT_
+#define _DPDK_INIT_
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <sys/types.h>
+#include <sys/queue.h>
+#include <netinet/in.h>
+#include <setjmp.h>
+#include <stdarg.h>
+#include <ctype.h>
+#include <errno.h>
+#include <getopt.h>
+#include <signal.h>
+#include <stdbool.h>
+
+#include <rte_common.h>
+#include <rte_log.h>
+#include <rte_memory.h>
+#include <rte_memcpy.h>
+#include <rte_malloc.h>
+#include <rte_memzone.h>
+#include <rte_eal.h>
+#include <rte_per_lcore.h>
+#include <rte_launch.h>
+#include <rte_atomic.h>
+#include <rte_cycles.h>
+#include <rte_prefetch.h>
+#include <rte_lcore.h>
+#include <rte_per_lcore.h>
+#include <rte_branch_prediction.h>
+#include <rte_interrupts.h>
+#include <rte_pci.h>
+#include <rte_random.h>
+#include <rte_debug.h>
+#include <rte_ether.h>
+#include <rte_ethdev.h>
+#include <rte_ring.h>
+#include <rte_mempool.h>
+#include <rte_mbuf.h>
+#include <rte_ip.h>
+
+#include <pthread.h>
+
+#define RTE_LOGTYPE_L2FWD RTE_LOGTYPE_USER1
+
+#define NB_MBUF   16384
+
+#define MAX_PKT_BURST 	32
+#define BURST_TX_DRAIN_US 	100 /* TX drain every ~100us */
+
+/*
+ * Configurable number of RX/TX ring descriptors
+ */
+#define RTE_TEST_RX_DESC_DEFAULT 2048
+#define RTE_TEST_TX_DESC_DEFAULT 4096
+
+pthread_mutex_t mutex;
+
+struct rte_mempool * pktmbuf_pool;
+struct rte_mempool * l2fwd_pktmbuf_pool;
+struct rte_mbuf *send_m;
+
+/* list of enabled ports */
+uint32_t l2fwd_dst_ports[RTE_MAX_ETHPORTS];
+
+struct mbuf_table {
+	unsigned len;
+	struct rte_mbuf *m_table[MAX_PKT_BURST];
+};
+
+
+#define MAX_RX_QUEUE_PER_LCORE 16
+#define MAX_TX_QUEUE_PER_PORT 16
+struct lcore_queue_conf {
+	unsigned n_rx_port;
+	unsigned rx_port_list[MAX_RX_QUEUE_PER_LCORE];
+} __rte_cache_aligned;
+struct lcore_queue_conf lcore_queue_conf[RTE_MAX_LCORE];
+#if 0
+static const struct rte_eth_conf port_conf = {
+	.rxmode = {
+		.split_hdr_size = 0,
+		.header_split   = 0, /**< Header Split disabled */
+		.hw_ip_checksum = 0, /**< IP checksum offload disabled */
+		.hw_vlan_filter = 0, /**< VLAN filtering disabled */
+		.jumbo_frame    = 0, /**< Jumbo Frame Support disabled */
+		.hw_strip_crc   = 0, /**< CRC stripped by hardware */
+	},
+	.txmode = {
+		.mq_mode = ETH_MQ_TX_NONE,
+	},
+};
+#endif
+/* Per-port statistics struct */
+struct l2fwd_port_statistics {
+	uint64_t tx;
+	uint64_t rx;
+	uint64_t dropped;
+} __rte_cache_aligned;
+struct l2fwd_port_statistics port_statistics[RTE_MAX_ETHPORTS];
+
+/* A tsc-based timer responsible for triggering statistics printout */
+#define TIMER_MILLISECOND 2000000ULL /* around 1ms at 2 Ghz */
+#define MAX_TIMER_PERIOD 86400 /* 1 day max */
+
+extern int dpdk_init(int argc, char **argv);
+extern int l2fwd_send_burst(struct lcore_queue_conf *qconf, unsigned n, uint8_t port);
+extern int l2fwd_send_packet(struct rte_mbuf *m, uint8_t port);
+extern void l2fwd_simple_forward(struct rte_mbuf *m, unsigned portid);
+
+#endif
+

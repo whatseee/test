@@ -1,0 +1,31 @@
+#
+# SCPS Makefile
+#
+#
+# Directories
+#
+#SYMTAB= -g -pg -a
+
+RTE_SDK=/home/gaopei/dpdk-2.0.0/
+ifeq ($(RTE_SDK),)
+$(error "Please define RTE_SDK environment variable")
+endif
+
+# Default target, can be overriden by command line or environment
+RTE_TARGET ?= x86_64-native-linuxapp-gcc
+
+include $(RTE_SDK)/mk/rte.vars.mk
+
+APP = gateway
+
+RTE_SRCDIR=/home/gaopei/MYPEP_20150330_X86/apps
+
+VPATH=../include/:../source/:../lib
+SRCS-y := dpdkinit.c gateway.c 
+
+CFLAGS += -O3
+CFLAGS += $(WERROR_FLAGS)
+
+LDLIBS+=-L ../lib/ -lscps
+
+include $(RTE_SDK)/mk/rte.extapp.mk

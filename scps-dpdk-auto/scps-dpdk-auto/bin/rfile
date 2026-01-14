@@ -1,0 +1,28 @@
+# GW Resource File - comments are allowed, starting with '#'.
+#    Comments can be anywhere EXCEPT between parameter values.
+
+# interface A info
+AIF_NAME		eth2
+AIF_BUF		65535
+AIF_RATE        1000000000
+AIF_CC		1
+AIF_TCPONLY     1
+
+# interface B info
+BIF_NAME		eth0
+BIF_BUF		65537
+BIF_RATE		250000000
+BIF_CC		0
+BIF_MINRTO	500000
+BIF_MTU         1452
+
+#BIF_LAYERING        1
+#C_LOCAL_UDP_PORT    44444
+#C_REMOTE_UDP_PORT   44444
+#BIF_OVERHEAD        28
+
+# IPFW info
+C_DIVPORT	        52000 
+C_TAP_REMOTE_ACCESS     1
+C_OTHER_PROTO_NON_IP    1
+C_OTHER_PROTO_QLEN      5000
